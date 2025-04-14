@@ -40,28 +40,25 @@ pub fn App() -> impl IntoView {
     };
 
     view! {
-        <main class="container">
-            <h1>"Welcome to Tauri + Leptos"</h1>
-
-            <div class="row">
-                <a href="https://tauri.app" target="_blank">
-                    <img src="public/tauri.svg" class="logo tauri" alt="Tauri logo"/>
-                </a>
-                <a href="https://docs.rs/leptos/" target="_blank">
-                    <img src="public/leptos.svg" class="logo leptos" alt="Leptos logo"/>
-                </a>
-            </div>
-            <p>"Click on the Tauri and Leptos logos to learn more."</p>
-
-            <form class="row" on:submit=greet>
-                <input
-                    id="greet-input"
-                    placeholder="Enter a name..."
-                    on:input=update_name
-                />
-                <button type="submit">"Greet"</button>
+        <div class="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
+            <h1 class="text-3xl font-bold text-blue-600 mb-6">"Welcome to RecFive"</h1>
+            <form class="w-full max-w-md" on:submit=greet>
+                <div class="flex flex-col md:flex-row gap-2 mb-4">
+                    <input
+                        id="greet-input"
+                        class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter a name..."
+                        on:input=update_name
+                    />
+                    <button
+                        type="submit"
+                        class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        "Greet"
+                    </button>
+                </div>
             </form>
-            <p>{ move || greet_msg.get() }</p>
-        </main>
+            <p class="mt-4 text-lg text-gray-700">{move || greet_msg.get()}</p>
+        </div>
     }
 }
