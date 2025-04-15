@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 2 * * *' # 每天凌晨2点自动检查
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+
+      - name: Install trunk (for Leptos frontend)
+        run: cargo install trunk --locked
+
+      - name: Install wasm32 target
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: Build backend (src-tauri)
+        run: cargo build --manifest-path src-tauri/Cargo.toml --all --release
+
+      - name: Check backend format
+        run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
+
+      - name: Check backend clippy
+        run: cargo clippy --manifest-path src-tauri/Cargo.toml --all -- -D warnings
+
+      - name: Build frontend (Leptos)
+        run: trunk build --release
+
+      - name: Check frontend format
+        run: cargo fmt --all -- --check
+
+      - name: Check frontend clippy
+        run: cargo clippy --all -- -D warnings
