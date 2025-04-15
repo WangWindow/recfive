@@ -4,8 +4,6 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "dialog"])]
-    async fn open(options: JsValue) -> JsValue;
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
@@ -21,8 +19,7 @@ pub fn Home() -> impl IntoView {
     let pick_input = move |_| {
         let set_input_path = set_input_path.clone();
         spawn_local(async move {
-            let opts = serde_wasm_bindgen::to_value(&serde_json::json!({"multiple": false})).unwrap();
-            let val = open(opts).await;
+            let val = invoke("pick_file", JsValue::NULL).await;
             if let Some(path) = val.as_string() {
                 set_input_path.set(path);
             }
@@ -31,8 +28,7 @@ pub fn Home() -> impl IntoView {
     let pick_output = move |_| {
         let set_output_path = set_output_path.clone();
         spawn_local(async move {
-            let opts = serde_wasm_bindgen::to_value(&serde_json::json!({"directory": true})).unwrap();
-            let val = open(opts).await;
+            let val = invoke("pick_directory", JsValue::NULL).await;
             if let Some(path) = val.as_string() {
                 set_output_path.set(path);
             }
