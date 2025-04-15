@@ -32,6 +32,7 @@ serde_json = "1.0.140"
 tokio = { version = "1.44.2", features = ["full"] }
 rfd = "0.15.3"
 lzma-rs = "0.3.0"
+walkdir = "2.5.0"
 
 [profile.dev]
 incremental = true # Compile your binary in smaller steps.
