@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_run:
-    workflows: ["Code Check & Format"]
+    workflows: ["Code Check & Format", "Tailwind CSS Build"]
     types:
       - completed
   schedule:
@@ -30,7 +30,7 @@ jobs:
           toolchain: stable
 
       - name: Install npm dependencies
-        run: npm install
+        run: npm install -D @tauri-apps/cli@latest
 
       - name: Build & Run Tauri (dev mode)
         run: npm run tauri dev

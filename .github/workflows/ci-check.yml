@@ -27,8 +27,5 @@ jobs:
       - name: Check format (rustfmt+leptosfmt)
         run: cargo fmt --all -- --check
 
-      - name: Clippy check (backend)
-        run: cargo clippy --manifest-path src-tauri/Cargo.toml --all -- -D warnings
-
-      - name: Clippy check (frontend)
+      - name: Clippy check
         run: cargo clippy --all -- -D warnings
