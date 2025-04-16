@@ -1,0 +1,52 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 0' # Automatically run every Sunday at 2 AM UTC
+  workflow_dispatch:
+
+permissions:
+    contents: write # Allow actions to write to the repository contents
+
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Rust add target
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: Download trunk binary
+        run: |
+          curl -L -o trunk.zip https://github.com/thedodd/trunk/releases/latest/download/trunk-x86_64-pc-windows-msvc.zip
+          tar -xf trunk.zip
+          mkdir $env:USERPROFILE\.cargo\bin -Force
+          move trunk.exe $env:USERPROFILE\.cargo\bin\ -Force
+
+      - name: Download cargo-tauri binary
+        run: |
+          curl -L -o cargo-tauri.zip https://github.com/tauri-apps/tauri/releases/download/tauri-cli-v2.5.0/cargo-tauri-x86_64-pc-windows-msvc.zip
+          tar -xf cargo-tauri.zip
+          mkdir $env:USERPROFILE\.cargo\bin -Force
+          move cargo-tauri.exe $env:USERPROFILE\.cargo\bin\ -Force
+
+      - name: Build Tauri (Windows)
+        run: cargo tauri build
+
+      - name: Upload exe to artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: recfive-windows-exe
+          path: target/release/recfive.exe
